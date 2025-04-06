@@ -5,7 +5,7 @@
  # To do
 
  - [ ] Tests!
- - [ ] Gas limit and target
+ - [ ] Gas limit and target per second (need to get block time)
  - [ ] Bridge info
  - [ ] Write functions
     - [ ] Prove withdrawals

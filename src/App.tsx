@@ -158,7 +158,7 @@ function App() {
                   {publicClientL1 && <L1Info client={publicClientL1} config={l1Config} />}
                 </div>
                 <div className="card">
-                  {publicClientL2 && <L2Info client={publicClientL2} config={l1Config} />}
+                  {publicClientL2 && <L2Info l1Client={publicClientL1} l2Client={publicClientL2} config={l1Config} />}
                 </div>
               </div>
             } />

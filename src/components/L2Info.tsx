@@ -1,16 +1,26 @@
 import { useEffect, useState } from 'react';
-import { PublicClient, Address, formatGwei } from 'viem';
+import { PublicClient, Address, formatGwei, hexToBytes } from 'viem';
 import { L2_CONTRACTS } from '../config';
 import DisplayAddress from './DisplayAddress';
+import { systemConfigABI } from '@eth-optimism/contracts-ts';
 
 type L2InfoProps = {
-  client: PublicClient;
-  config?: {
+  l1Client: PublicClient;
+  l2Client: PublicClient;
+  config: {
+    SystemConfigProxy: Address;
     l2BlockExplorerURL: string;
   };
 };
 
-const L2Info = ({ client, config }: L2InfoProps) => {
+type EIP1559Params = {
+  version: number;
+  denominator: number;
+  elasticity: number;
+  isValid: boolean;
+};
+
+const L2Info = ({ l1Client, l2Client, config }: L2InfoProps) => {
   const [blockNumber, setBlockNumber] = useState<bigint>(0n);
   const [chainId, setChainId] = useState<number>(0);
   const [chainInfo, setChainInfo] = useState<{name: string; nativeCurrency: any}>({
@@ -20,15 +30,69 @@ const L2Info = ({ client, config }: L2InfoProps) => {
   const [gasPrice, setGasPrice] = useState<bigint>(0n);
   const [rpcUrl, setRpcUrl] = useState<string>('');
   const [l1BlockNumber, setL1BlockNumber] = useState<bigint>(0n);
+  const [extraData, setExtraData] = useState<string>('');
+  const [eip1559Params, setEip1559Params] = useState<EIP1559Params>({
+    version: 0,
+    denominator: 0,
+    elasticity: 0,
+    isValid: false
+  });
+  const [gasLimit, setGasLimit] = useState<bigint>(0n);
+
+  const parseEIP1559Params = (extraDataHex: string): EIP1559Params => {
+    try {
+      // Convert hex string to bytes
+      // Ensure extraDataHex is properly formatted (with 0x prefix)
+      const formattedHex = extraDataHex.startsWith('0x') 
+        ? extraDataHex as `0x${string}` 
+        : `0x${extraDataHex}` as `0x${string}`;
+      const bytes = hexToBytes(formattedHex);
+      
+      // Check if we have at least 9 bytes
+      if (bytes.length < 9) {
+        return { version: 0, denominator: 0, elasticity: 0, isValid: false };
+      }
+      
+      // Parse version (1 byte)
+      const version = bytes[0];
+      
+      // Parse denominator (4 bytes, big-endian)
+      const denominator = (bytes[1] << 24) | (bytes[2] << 16) | (bytes[3] << 8) | bytes[4];
+      
+      // Parse elasticity (4 bytes, big-endian)
+      const elasticity = (bytes[5] << 24) | (bytes[6] << 16) | (bytes[7] << 8) | bytes[8];
+      
+      // Check if valid according to spec
+      const isValid = version === 0 && denominator !== 0 && bytes.length <= 32;
+      
+      return { version, denominator, elasticity, isValid };
+    } catch (error) {
+      console.error('Error parsing EIP-1559 parameters:', error);
+      return { version: 0, denominator: 0, elasticity: 0, isValid: false };
+    }
+  };
 
   useEffect(() => {
-    const fetchInfo = async () => {
+    const fetchL2ClientInfo = async () => {
       try {
-        setBlockNumber(await client.getBlockNumber());
-        setChainId(await client.getChainId());
-        setGasPrice(await client.getGasPrice());
+        const blockNum = await l2Client.getBlockNumber();
+        setBlockNumber(blockNum);
         
-        const chainData = client.chain;
+        // Get latest block to retrieve extraData
+        const latestBlock = await l2Client.getBlock({ blockNumber: blockNum });
+        const extraDataHex = latestBlock.extraData || '';
+        setExtraData(extraDataHex);
+        
+        // Parse EIP-1559 parameters from extraData
+        if (extraDataHex) {
+          const params = parseEIP1559Params(extraDataHex);
+          setEip1559Params(params);
+        }
+        
+        setChainId(await l2Client.getChainId());
+        setGasPrice(await l2Client.getGasPrice());
+        
+        const chainData = l2Client.chain;
         if (chainData) {
           setChainInfo({
             name: chainData.name,
@@ -36,14 +100,14 @@ const L2Info = ({ client, config }: L2InfoProps) => {
           });
         }
 
-        if (client.transport && 'url' in client.transport && client.transport.url) {
-          setRpcUrl(client.transport.url.toString());
-        } else if (client.transport && 'transports' in client.transport && client.transport.transports?.[0]?.url) {
-          setRpcUrl(client.transport.transports[0].url.toString());
+        if (l2Client.transport && 'url' in l2Client.transport && l2Client.transport.url) {
+          setRpcUrl(l2Client.transport.url.toString());
+        } else if (l2Client.transport && 'transports' in l2Client.transport && l2Client.transport.transports?.[0]?.url) {
+          setRpcUrl(l2Client.transport.transports[0].url.toString());
         }
 
         try {
-          const l1BlockData = await client.readContract({
+          const l1BlockData = await l2Client.readContract({
             address: L2_CONTRACTS.L1Block as Address,
             abi: [{
               name: 'number',
@@ -63,21 +127,45 @@ const L2Info = ({ client, config }: L2InfoProps) => {
       }
     };
 
-    fetchInfo();
+    const fetchL1ClientInfo = async () => {
+      try {
+        const data = await l1Client.multicall({
+          contracts: [
+            {
+              address: config.SystemConfigProxy,
+              abi: systemConfigABI,
+              functionName: 'gasLimit',
+            }
+          ]
+        });
+        setGasLimit(data[0].result as bigint);
+      } catch (err) {
+        console.error("Error fetching L1 contract data:", err);
+      }
+    };
 
-  }, [client]);
+    fetchL2ClientInfo();
+    fetchL1ClientInfo();
+  }, [l1Client, l2Client]);
 
   return (
     <div>
       <h2 className="mb-4">L2: {chainInfo.name}</h2>
       <div className="mb-4">
-        <h3 className="mb-2">Network Details</h3>
         <div><strong>Chain ID:</strong> {chainId}</div>
         <div><strong>RPC URL:</strong> {rpcUrl}</div>
-        <div><strong>Currency:</strong> {chainInfo.nativeCurrency?.symbol} ({chainInfo.nativeCurrency?.name})</div>
         <div><strong>L2 Block Number:</strong> {blockNumber.toString()}</div>
         <div><strong>L1 Block Number:</strong> {l1BlockNumber.toString()}</div>
         <div><strong>Gas Price:</strong> {formatGwei(gasPrice)} Gwei</div>
+        {eip1559Params.isValid && (
+          <div><strong>EIP-1559 Parameters:</strong> Version: {eip1559Params.version}; Denominator: {eip1559Params.denominator}; Elasticity: {eip1559Params.elasticity}</div>
+        )}
+      </div>
+        
+      <div className="mb-4">
+        <h3 className="mb-2">Gas Limit</h3>
+        <div><strong>Limit:</strong> {(gasLimit / 1000000n).toString()}M/block</div>
+          <div><strong>Target:</strong> {eip1559Params.isValid && ((gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString())}M/block</div>
       </div>
       
       <div className="mb-4">

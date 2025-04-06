@@ -34,9 +34,9 @@ const L1Info = ({ client, config }: L1InfoProps) => {
  
   useEffect(() => {
     const fetchInfo = async () => {
-      setBlockNumber(await client.getBlockNumber());
       setChainId(await client.getChainId());
       setGasPrice(await client.getGasPrice());
+      setBlockNumber(await client.getBlockNumber());
       
       const chainData = client.chain;
       if (chainData) {
@@ -69,7 +69,7 @@ const L1Info = ({ client, config }: L1InfoProps) => {
               address: config.SystemConfigProxy,
               abi: systemConfigABI,
               functionName: 'l1CrossDomainMessenger',
-            }
+            },
           ]
         });
 
@@ -91,15 +91,16 @@ const L1Info = ({ client, config }: L1InfoProps) => {
       <h2 className="mb-4">L1: {chainInfo.name}</h2>
       <div>
         <div className="mb-4">
-          <h3 className="mb-2">Network Details</h3>
           <div><strong>Chain ID:</strong> {chainId}</div>
           <div><strong>RPC URL:</strong> {rpcUrl}</div>
-          <div><strong>Currency:</strong> {chainInfo.nativeCurrency?.symbol} ({chainInfo.nativeCurrency?.name})</div>
           <div><strong>Block Number:</strong> {blockNumber.toString()}</div>
           <div><strong>Gas Price:</strong> {formatGwei(gasPrice)} Gwei</div>
         </div>
         <div className="mb-2">
           <h3 className="mb-2">Optimism Config</h3>
+          <div>
+            <strong>SystemConfigProxy:</strong> <DisplayAddress address={config.SystemConfigProxy} blockExplorerURL={config.l1BlockExplorerURL} />
+          </div>
           <div>
             <strong>L1StandardBridge:</strong> <DisplayAddress address={optimismConfig.l1StandardBridge} blockExplorerURL={config.l1BlockExplorerURL} />
           </div>
