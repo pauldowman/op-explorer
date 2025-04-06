@@ -7,7 +7,7 @@ type DisplayAddressProps = {
 };
 
 const DisplayAddress: React.FC<DisplayAddressProps> = ({ address, blockExplorerURL }) => {
-  const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'light');
+  const [_, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'light');
   
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {

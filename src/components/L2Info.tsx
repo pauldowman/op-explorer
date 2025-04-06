@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PublicClient, Address, formatGwei } from 'viem';
 import { L2_CONTRACTS } from '../config';
 import DisplayAddress from './DisplayAddress';
@@ -20,7 +20,6 @@ const L2Info = ({ client, config }: L2InfoProps) => {
   const [gasPrice, setGasPrice] = useState<bigint>(0n);
   const [rpcUrl, setRpcUrl] = useState<string>('');
   const [l1BlockNumber, setL1BlockNumber] = useState<bigint>(0n);
-  const [syncStatus, setSyncStatus] = useState<any>({});
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -59,13 +58,6 @@ const L2Info = ({ client, config }: L2InfoProps) => {
         } catch (error) {
           console.error('Error fetching L1 block number:', error);
         }
-
-        const block = await client.getBlock();
-        setSyncStatus({
-          timestamp: new Date(Number(block.timestamp) * 1000).toLocaleString(),
-          hash: block.hash,
-          gasUsed: block.gasUsed
-        });
       } catch (error) {
         console.error('Error fetching L2 information:', error);
       }

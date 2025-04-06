@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import { createPublicClient, http, formatGwei, PublicClient, Address } from 'viem';
+import {useEffect, useState} from 'react';
+import { formatGwei, PublicClient, Address } from 'viem';
 import { systemConfigABI } from '@eth-optimism/contracts-ts';
 import DisplayAddress from './DisplayAddress';
 

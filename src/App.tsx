@@ -2,15 +2,9 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { 
   createWalletClient,
-  createPublicClient,
-  http,
-  formatEther,
   custom,
   type Address,
-  type Hash,
-  type TransactionReceipt,
   type PublicClient,
-  parseEther,
 } from 'viem'
 import { mainnet } from 'viem/chains'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
