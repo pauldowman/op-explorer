@@ -24,11 +24,12 @@ const DisplayAddress: React.FC<DisplayAddressProps> = ({ address, blockExplorerU
   }, []);
 
   return (
-    <span className="hex" title={address}>
-      {`${address.substring(0, 10)}...${address.substring(address.length - 8)}`}
+    <span className="hex">
+      <span title={address}>{`${address.substring(0, 10)}...${address.substring(address.length - 8)}`}</span>
       <a 
         href={`${blockExplorerURL}address/${address}`} 
-        target="_blank" 
+        target="_blank"
+        title={`View on ${blockExplorerURL}`}
         rel="noopener noreferrer"
         style={{ display: 'inline-block', marginLeft: '4px' }}
       >
