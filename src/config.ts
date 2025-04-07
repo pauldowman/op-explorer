@@ -42,8 +42,8 @@ const L1_SEPOLIA = createPublicClient({
   transport: http(),
 })
 
-const L1_BLOCK_EXPLORER_URL_MAINNET = 'https://etherscan.io/'
-const L1_BLOCK_EXPLORER_URL_SEPOLIA = 'https://sepolia.etherscan.io/'
+const L1_BLOCK_EXPLORER_URL_MAINNET = 'https://etherscan.io'
+const L1_BLOCK_EXPLORER_URL_SEPOLIA = 'https://sepolia.etherscan.io'
 
 export const CHAIN_CONFIG = {
   optimism: {
@@ -54,9 +54,9 @@ export const CHAIN_CONFIG = {
       transport: http(),
     }),
     config: {
+      superchainRegistry: 'https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/refs/heads/main/superchain/configs/mainnet/op.toml',
       SystemConfigProxy: "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290",
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
-      l2BlockExplorerURL: 'https://optimism.blockscout.com/',
       interestingDisputeGames: [
         {
           address: '0x52cE243d552369b11D6445Cd187F6393d3B42D4a', 
@@ -85,9 +85,8 @@ export const CHAIN_CONFIG = {
       transport: http(),
     }),
     config: {
-      SystemConfigProxy: "0x034edD2A225f7f429A63E0f1D2084B9E0A93b538",
+      superchainRegistry: 'https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/refs/heads/main/superchain/configs/sepolia/op.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
-      l2BlockExplorerURL: 'https://optimism-sepolia.blockscout.com/',
       interestingDisputeGames: [],
     },
   },
@@ -99,9 +98,8 @@ export const CHAIN_CONFIG = {
       transport: http(),
     }),
     config: {
-      SystemConfigProxy: "0x73a79Fab69143498Ed3712e519A88a918e1f4072",
+      superchainRegistry: 'https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/refs/heads/main/superchain/configs/mainnet/base.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
-      l2BlockExplorerURL: 'https://basescan.org/',
       interestingDisputeGames: [],
     },
   },
@@ -113,9 +111,8 @@ export const CHAIN_CONFIG = {
       transport: http(),
     }),
     config: {
-      SystemConfigProxy: "0xf272670eb55e895584501d564AfEB048bEd26194",
+      superchainRegistry: 'https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/refs/heads/main/superchain/configs/sepolia/base.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
-      l2BlockExplorerURL: 'https://sepolia.basescan.org/',
       interestingDisputeGames: [],
     },
   }

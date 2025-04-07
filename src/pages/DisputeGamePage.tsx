@@ -5,13 +5,13 @@ import DisputeGame from '../components/DisputeGame';
 
 type DisputeGamePageProps = {
   publicClientL1: PublicClient | null;
-  l1Config: {
+  chainConfig: {
     SystemConfigProxy: Address;
     l1BlockExplorerURL?: string;
   };
 };
 
-const DisputeGamePage: React.FC<DisputeGamePageProps> = ({ publicClientL1, l1Config }) => {
+const DisputeGamePage: React.FC<DisputeGamePageProps> = ({ publicClientL1, chainConfig }) => {
   const { address } = useParams<{ address: string }>();
   
   if (!publicClientL1) {
@@ -29,7 +29,7 @@ const DisputeGamePage: React.FC<DisputeGamePageProps> = ({ publicClientL1, l1Con
         <h1>Dispute Game</h1>
       </div>
       
-      <DisputeGame address={address as Address} publicClientL1={publicClientL1} l1Config={l1Config} />
+      <DisputeGame address={address as Address} publicClientL1={publicClientL1} chainConfig={chainConfig} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
 } from 'viem'
 import { mainnet } from 'viem/chains'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { parse } from 'smol-toml'
 
 import L1Info from './components/L1Info';
 import L2Info from './components/L2Info';
@@ -41,8 +42,9 @@ function App() {
   const [publicClientL1, setPublicClientL1] = useState<PublicClient>(CHAIN_CONFIG.optimism.l1_client as any)
   const [publicClientL2, setPublicClientL2] = useState<PublicClient>(CHAIN_CONFIG.optimism.l2_client as any)
   const [walletClient, setWalletClient] = useState<any>(null)
-  const [l1Config, setL1Config] = useState<any>(CHAIN_CONFIG.optimism.config)
-
+  const [chainConfig, setChainConfig] = useState<any>(CHAIN_CONFIG.optimism.config)
+  const [superchainRegistryInfo, setSuperchainRegistryInfo] = useState<any>(null);
+  
   useEffect(() => {
     if (window.ethereum) {
       const client = createWalletClient({ 
@@ -61,7 +63,16 @@ function App() {
   useEffect(() => {
     setPublicClientL1(CHAIN_CONFIG[currentChain].l1_client as any);
     setPublicClientL2(CHAIN_CONFIG[currentChain].l2_client as any);
-    setL1Config(CHAIN_CONFIG[currentChain].config)
+    setChainConfig(CHAIN_CONFIG[currentChain].config)
+
+    const loadSuperchainRegistryInfo = async () => {
+      const superchainRegistryInfo = await fetch(chainConfig.superchainRegistry)
+      const superchainRegistry = parse(await superchainRegistryInfo.text())
+      console.log("superchainRegistry", superchainRegistry)
+      setSuperchainRegistryInfo(superchainRegistry)
+    }
+
+    setSuperchainRegistryInfo(loadSuperchainRegistryInfo());
   }, [currentChain]);
 
   useEffect(() => {
@@ -155,10 +166,10 @@ function App() {
             <Route path="/" element={
               <div className="grid">
                 <div className="card">
-                  {publicClientL1 && <L1Info client={publicClientL1} config={l1Config} />}
+                  {publicClientL1 && <L1Info client={publicClientL1} config={chainConfig} superchainRegistryInfo={superchainRegistryInfo} />}
                 </div>
                 <div className="card">
-                  {publicClientL2 && <L2Info l1Client={publicClientL1} l2Client={publicClientL2} config={l1Config} />}
+                  {publicClientL2 && <L2Info l1Client={publicClientL1} l2Client={publicClientL2} config={chainConfig} superchainRegistryInfo={superchainRegistryInfo} />}
                 </div>
               </div>
             } />
@@ -166,7 +177,7 @@ function App() {
               <div className="card">
                 <DisputeGamesPage 
                   publicClientL1={publicClientL1} 
-                  l1Config={l1Config}
+                  chainConfig={chainConfig}
                 />
               </div>
             } />
@@ -174,7 +185,7 @@ function App() {
               <div className="card">
                 <DisputeGamePage 
                   publicClientL1={publicClientL1} 
-                  l1Config={l1Config}
+                  chainConfig={chainConfig}
                 />
               </div>
             } />

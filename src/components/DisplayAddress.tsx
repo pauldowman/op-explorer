@@ -25,9 +25,9 @@ const DisplayAddress: React.FC<DisplayAddressProps> = ({ address, blockExplorerU
 
   return (
     <span className="hex">
-      <span title={address}>{`${address.substring(0, 10)}...${address.substring(address.length - 8)}`}</span>
+      <span title={address}>{`${address?.substring(0, 10)}...${address?.substring(address?.length - 8)}`}</span>
       <a 
-        href={`${blockExplorerURL}address/${address}`} 
+        href={`${blockExplorerURL}/address/${address}`} 
         target="_blank"
         title={`View on ${blockExplorerURL}`}
         rel="noopener noreferrer"

@@ -7,7 +7,7 @@ import { getGameTypeName, L1_ABIs } from '../config';
 type DisputeGameProps = {
   address: Address;
   publicClientL1: PublicClient;
-  l1Config: {
+  chainConfig: {
     SystemConfigProxy: Address;
     l1BlockExplorerURL?: string;
   };
@@ -115,7 +115,7 @@ const TruncatedHex: React.FC<{ value: string }> = ({ value }) => {
 const DisputeGame: React.FC<DisputeGameProps> = ({
   address,
   publicClientL1,
-  l1Config
+  chainConfig
 }) => {
   const [game, setGame] = useState<DisputeGame | null>(null);
   const [claims, setClaims] = useState<Claim[]>([]);
@@ -250,14 +250,14 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
         <>
           <div className="game-header">
             <h2>Dispute Game</h2>
-            <div className="game-address"><DisplayAddress address={address} blockExplorerURL={l1Config.l1BlockExplorerURL} /></div>
+            <div className="game-address"><DisplayAddress address={address} blockExplorerURL={chainConfig.l1BlockExplorerURL} /></div>
           </div>
           
           <div className="game-details">
             <div><strong>Creation Time:</strong> {new Date(Number(game.createdAt) * 1000).toLocaleString()}</div>
             <div><strong>Game Type:</strong> {getGameTypeName(game.gameType)} ({game.gameType})</div>
             <div><strong>Status:</strong> <span className={`status-${game.status}`}>{getStatusText(game.status)}</span></div>
-            <div><strong>Game Creator:</strong> <DisplayAddress address={game.gameCreator} blockExplorerURL={l1Config.l1BlockExplorerURL} /></div>
+            <div><strong>Game Creator:</strong> <DisplayAddress address={game.gameCreator} blockExplorerURL={chainConfig.l1BlockExplorerURL} /></div>
             <div><strong>L2 Block Number:</strong> {game.l2BlockNumber.toString()}</div>
             <div><strong>L2 Chain ID:</strong> {game.l2ChainId.toString()}</div>
             <div><strong>L1 Head:</strong> <TruncatedHex value={game.l1Head} /></div>
@@ -274,7 +274,7 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
             ) : (
               <div className="claims-list">
                 {claims.map(claim => (
-                  <ClaimDataDisplay key={claim.index} claim={claim} blockExplorerURL={l1Config.l1BlockExplorerURL} />
+                  <ClaimDataDisplay key={claim.index} claim={claim} blockExplorerURL={chainConfig.l1BlockExplorerURL} />
                 ))}
               </div>
             )}

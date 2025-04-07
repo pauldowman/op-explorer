@@ -12,12 +12,13 @@ type OptimismConfig = {
 type L1InfoProps = {
   client: PublicClient;
   config: {
-    SystemConfigProxy: Address;
     l1BlockExplorerURL: string;
   };
+  superchainRegistryInfo: any; // TODO: give this a type
 };
 
-const L1Info = ({ client, config }: L1InfoProps) => {
+const L1Info = ({ client, config, superchainRegistryInfo }: L1InfoProps) => {
+  const systemConfigProxy = superchainRegistryInfo?.addresses?.SystemConfigProxy;
   const [blockNumber, setBlockNumber] = useState<bigint>(0n);
   const [chainId, setChainId] = useState<number>(0);
   const [chainInfo, setChainInfo] = useState<{name: string; nativeCurrency: any}>({
@@ -52,21 +53,22 @@ const L1Info = ({ client, config }: L1InfoProps) => {
         setRpcUrl(client.transport.transports[0].url.toString());
       }
 
-      try {
-        const data = await client.multicall({
-          contracts: [
+      if (systemConfigProxy) {
+        try {
+          const data = await client.multicall({
+            contracts: [
             {
-              address: config.SystemConfigProxy,
+              address: systemConfigProxy,
               abi: systemConfigABI,
               functionName: 'l1StandardBridge',
             },
             {
-              address: config.SystemConfigProxy,
+              address: systemConfigProxy,
               abi: systemConfigABI,
               functionName: 'optimismPortal',
             },
             {
-              address: config.SystemConfigProxy,
+              address: systemConfigProxy,
               abi: systemConfigABI,
               functionName: 'l1CrossDomainMessenger',
             },
@@ -79,12 +81,13 @@ const L1Info = ({ client, config }: L1InfoProps) => {
           l1CrossDomainMessenger: data[2].result as Address,
         });
       } catch (err) {
-        console.error("Error fetching L1 contract data:", err);
+          console.error("Error fetching L1 contract data:", err);
+        }
       }
     };
 
     fetchInfo();
-  }, [client]);
+  }, [client, config, superchainRegistryInfo]);
 
   return (
     <div>
@@ -99,7 +102,7 @@ const L1Info = ({ client, config }: L1InfoProps) => {
         <div className="mb-2">
           <h3 className="mb-2">Optimism Config</h3>
           <div>
-            <strong>SystemConfigProxy:</strong> <DisplayAddress address={config.SystemConfigProxy} blockExplorerURL={config.l1BlockExplorerURL} />
+            <strong>SystemConfigProxy:</strong> <DisplayAddress address={systemConfigProxy} blockExplorerURL={config.l1BlockExplorerURL} />
           </div>
           <div>
             <strong>L1StandardBridge:</strong> <DisplayAddress address={optimismConfig.l1StandardBridge} blockExplorerURL={config.l1BlockExplorerURL} />

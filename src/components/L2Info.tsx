@@ -8,9 +8,9 @@ type L2InfoProps = {
   l1Client: PublicClient;
   l2Client: PublicClient;
   config: {
-    SystemConfigProxy: Address;
-    l2BlockExplorerURL: string;
+    l1BlockExplorerURL: string;
   };
+  superchainRegistryInfo: any; // TODO: give this a type
 };
 
 type EIP1559Params = {
@@ -20,7 +20,8 @@ type EIP1559Params = {
   isValid: boolean;
 };
 
-const L2Info = ({ l1Client, l2Client, config }: L2InfoProps) => {
+const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoProps) => {
+  const systemConfigProxy = superchainRegistryInfo?.addresses?.SystemConfigProxy;
   const [blockNumber, setBlockNumber] = useState<bigint>(0n);
   const [chainId, setChainId] = useState<number>(0);
   const [chainInfo, setChainInfo] = useState<{name: string; nativeCurrency: any}>({
@@ -30,7 +31,7 @@ const L2Info = ({ l1Client, l2Client, config }: L2InfoProps) => {
   const [gasPrice, setGasPrice] = useState<bigint>(0n);
   const [rpcUrl, setRpcUrl] = useState<string>('');
   const [l1BlockNumber, setL1BlockNumber] = useState<bigint>(0n);
-  const [extraData, setExtraData] = useState<string>('');
+  const [_, setExtraData] = useState<string>('');
   const [eip1559Params, setEip1559Params] = useState<EIP1559Params>({
     version: 0,
     denominator: 0,
@@ -128,25 +129,52 @@ const L2Info = ({ l1Client, l2Client, config }: L2InfoProps) => {
     };
 
     const fetchL1ClientInfo = async () => {
-      try {
-        const data = await l1Client.multicall({
-          contracts: [
-            {
-              address: config.SystemConfigProxy,
-              abi: systemConfigABI,
-              functionName: 'gasLimit',
-            }
-          ]
-        });
-        setGasLimit(data[0].result as bigint);
-      } catch (err) {
-        console.error("Error fetching L1 contract data:", err);
+      if (systemConfigProxy) {
+        try {
+          const data = await l1Client.multicall({
+            contracts: [
+              {
+                address: systemConfigProxy,
+                abi: systemConfigABI,
+                functionName: 'gasLimit',
+              }
+            ]
+          });
+          setGasLimit(data[0].result as bigint);
+        } catch (err) {
+          console.error("Error fetching L1 contract data:", err);
+        }
       }
     };
 
     fetchL2ClientInfo();
     fetchL1ClientInfo();
-  }, [l1Client, l2Client]);
+  }, [l1Client, l2Client, config, superchainRegistryInfo]);
+
+  const gasLimitPerBlock = () => {
+    return (gasLimit / 1000000n).toString();
+  }
+
+  const gasLimitPerSecond = (superchainRegistryInfo: any) => {
+    if (superchainRegistryInfo?.block_time) {
+      return (gasLimit / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
+    }
+    return "";
+  }
+
+  const gasTargetPerBlock = (eip1559Params: EIP1559Params) => {
+    if (eip1559Params.isValid) {
+      return (gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString();
+    }
+    return "";
+  }
+
+  const gasTargetPerSecond = (eip1559Params: EIP1559Params, superchainRegistryInfo: any) => {
+    if (eip1559Params.isValid && superchainRegistryInfo?.block_time) {
+      return (gasLimit / BigInt(eip1559Params.elasticity) / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
+    }
+    return "";
+  }
 
   return (
     <div>
@@ -154,6 +182,7 @@ const L2Info = ({ l1Client, l2Client, config }: L2InfoProps) => {
       <div className="mb-4">
         <div><strong>Chain ID:</strong> {chainId}</div>
         <div><strong>RPC URL:</strong> {rpcUrl}</div>
+        <div><strong>Block Time:</strong> {superchainRegistryInfo?.block_time} seconds</div>
         <div><strong>L2 Block Number:</strong> {blockNumber.toString()}</div>
         <div><strong>L1 Block Number:</strong> {l1BlockNumber.toString()}</div>
         <div><strong>Gas Price:</strong> {formatGwei(gasPrice)} Gwei</div>
@@ -164,16 +193,16 @@ const L2Info = ({ l1Client, l2Client, config }: L2InfoProps) => {
         
       <div className="mb-4">
         <h3 className="mb-2">Gas Limit</h3>
-        <div><strong>Limit:</strong> {(gasLimit / 1000000n).toString()}M/block</div>
-          <div><strong>Target:</strong> {eip1559Params.isValid && ((gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString())}M/block</div>
+        <div><strong>Limit:</strong> {gasLimitPerBlock()}M/block; {gasLimitPerSecond(superchainRegistryInfo)}M/sec</div>
+          <div><strong>Target:</strong> {gasTargetPerBlock(eip1559Params)}M/block; {gasTargetPerSecond(eip1559Params, superchainRegistryInfo)}M/sec</div>
       </div>
       
       <div className="mb-4">
         <h3 className="mb-2">Predeploys</h3>
-        <div><strong>L2ToL1MessagePasser:</strong> <DisplayAddress address={L2_CONTRACTS.L2ToL1MessagePasser as Address} blockExplorerURL={config?.l2BlockExplorerURL} /></div>
-        <div><strong>L2CrossDomainMessenger:</strong> <DisplayAddress address={L2_CONTRACTS.L2CrossDomainMessenger as Address} blockExplorerURL={config?.l2BlockExplorerURL} /></div>
-        <div><strong>L2StandardBridge:</strong> <DisplayAddress address={L2_CONTRACTS.L2StandardBridge as Address} blockExplorerURL={config?.l2BlockExplorerURL} /></div>
-        <div><strong>GasPriceOracle:</strong> <DisplayAddress address={L2_CONTRACTS.GasPriceOracle as Address} blockExplorerURL={config?.l2BlockExplorerURL} /></div>
+        <div><strong>L2ToL1MessagePasser:</strong> <DisplayAddress address={L2_CONTRACTS.L2ToL1MessagePasser as Address} blockExplorerURL={superchainRegistryInfo?.explorer} /></div>
+        <div><strong>L2CrossDomainMessenger:</strong> <DisplayAddress address={L2_CONTRACTS.L2CrossDomainMessenger as Address} blockExplorerURL={superchainRegistryInfo?.explorer} /></div>
+        <div><strong>L2StandardBridge:</strong> <DisplayAddress address={L2_CONTRACTS.L2StandardBridge as Address} blockExplorerURL={superchainRegistryInfo?.explorer} /></div>
+        <div><strong>GasPriceOracle:</strong> <DisplayAddress address={L2_CONTRACTS.GasPriceOracle as Address} blockExplorerURL={superchainRegistryInfo?.explorer} /></div>
       </div>
     </div>
   );

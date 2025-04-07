@@ -4,10 +4,9 @@
 
  # To do
 
- - [ ] Tests!
- - [ ] Gas limit and target per second (need to get block time)
- - [ ] Bridge info
- - [ ] Write functions
-    - [ ] Prove withdrawals
-    - [ ] Create dispute game claims
-    - [ ] Create dispute games
+- [ ] Tests!
+- [ ] Bridge info
+- [ ] Write functions
+   - [ ] Prove withdrawals
+   - [ ] Create dispute game claims
+   - [ ] Create dispute games

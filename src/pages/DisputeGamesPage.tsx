@@ -4,7 +4,7 @@ import DisputeGames from '../components/DisputeGames';
 
 interface DisputeGamesPageProps {
   publicClientL1: PublicClient | null;
-  l1Config: {
+  chainConfig: {
     SystemConfigProxy: Address;
     l1BlockExplorerURL?: string;
     interestingDisputeGames: {
@@ -14,7 +14,7 @@ interface DisputeGamesPageProps {
   };
 }
 
-const DisputeGamesPage: React.FC<DisputeGamesPageProps> = ({ publicClientL1, l1Config }) => {
+const DisputeGamesPage: React.FC<DisputeGamesPageProps> = ({ publicClientL1, chainConfig }) => {
   if (!publicClientL1) {
     return <div>Loading client...</div>;
   }
@@ -22,7 +22,7 @@ const DisputeGamesPage: React.FC<DisputeGamesPageProps> = ({ publicClientL1, l1C
   return (
     <div>
       <h1 className="mb-6">Dispute Games</h1>
-      <DisputeGames publicClientL1={publicClientL1} l1Config={l1Config} />
+      <DisputeGames publicClientL1={publicClientL1} chainConfig={chainConfig} />
     </div>
   );
 };

@@ -18,7 +18,7 @@ interface RawDisputeGame {
 
 type DisputeGamesProps = {
   publicClientL1: PublicClient;
-  l1Config: {
+  chainConfig: {
     SystemConfigProxy: Address;
     interestingDisputeGames: {
       address: Address;
@@ -47,7 +47,7 @@ const getStatusClass = (status?: number): string => {
 
 const DisputeGames: React.FC<DisputeGamesProps> = ({
   publicClientL1,
-  l1Config
+  chainConfig
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [gameCount, setGameCount] = useState<number>(0);
@@ -69,7 +69,7 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
       try {
         console.log('Fetching dispute game factory proxy...');
         const factoryProxy = await publicClientL1.readContract({
-          address: l1Config.SystemConfigProxy,
+          address: chainConfig.SystemConfigProxy,
           abi: L1_ABIs.systemConfigABI,
           functionName: 'disputeGameFactory',
         }) as Address;
@@ -85,7 +85,7 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
     setGameCount(0);
     
     fetchDisputeGameFactoryProxy();
-  }, [publicClientL1, l1Config.SystemConfigProxy]);
+  }, [publicClientL1, chainConfig.SystemConfigProxy]);
 
   useEffect(() => {
     const loadDisputeGames = async () => {
@@ -191,7 +191,7 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
 
   return (
     <div>
-      {l1Config.interestingDisputeGames.length > 0 && (
+      {chainConfig.interestingDisputeGames.length > 0 && (
       <div className="interesting-games-section mb-4">
         <div 
           className="interesting-games-header" 
@@ -203,7 +203,7 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
         
         {isInterestingGamesOpen && (
           <div className="interesting-games-content">
-            {l1Config.interestingDisputeGames.map(game => (
+            {chainConfig.interestingDisputeGames.map(game => (
               <div key={game.address} className="interesting-game-item">
                 <Link to={`/dispute-game/${game.address}`} className="game-address hex">{game.address}</Link>
                 <span className="game-description">{game.description}</span>
