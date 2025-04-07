@@ -66,13 +66,13 @@ function App() {
     setChainConfig(CHAIN_CONFIG[currentChain].config)
 
     const loadSuperchainRegistryInfo = async () => {
-      const superchainRegistryInfo = await fetch(chainConfig.superchainRegistry)
+      const superchainRegistryInfo = await fetch(CHAIN_CONFIG[currentChain].config.superchainRegistry)
       const superchainRegistry = parse(await superchainRegistryInfo.text())
       console.log("superchainRegistry", superchainRegistry)
       setSuperchainRegistryInfo(superchainRegistry)
     }
 
-    setSuperchainRegistryInfo(loadSuperchainRegistryInfo());
+    loadSuperchainRegistryInfo();
   }, [currentChain]);
 
   useEffect(() => {
@@ -177,6 +177,7 @@ function App() {
               <div className="card">
                 <DisputeGamesPage 
                   publicClientL1={publicClientL1} 
+                  superchainRegistryInfo={superchainRegistryInfo}
                   chainConfig={chainConfig}
                 />
               </div>

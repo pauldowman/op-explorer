@@ -18,6 +18,7 @@ interface RawDisputeGame {
 
 type DisputeGamesProps = {
   publicClientL1: PublicClient;
+  superchainRegistryInfo: any;
   chainConfig: {
     SystemConfigProxy: Address;
     interestingDisputeGames: {
@@ -47,8 +48,11 @@ const getStatusClass = (status?: number): string => {
 
 const DisputeGames: React.FC<DisputeGamesProps> = ({
   publicClientL1,
+  superchainRegistryInfo,
   chainConfig
 }) => {
+  const systemConfigProxy = superchainRegistryInfo?.addresses?.SystemConfigProxy;
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [gameCount, setGameCount] = useState<number>(0);
   const [disputeGames, setDisputeGames] = useState<DisputeGame[]>([]);
@@ -67,9 +71,8 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
   useEffect(() => {
     const fetchDisputeGameFactoryProxy = async () => {
       try {
-        console.log('Fetching dispute game factory proxy...');
         const factoryProxy = await publicClientL1.readContract({
-          address: chainConfig.SystemConfigProxy,
+          address: systemConfigProxy,
           abi: L1_ABIs.systemConfigABI,
           functionName: 'disputeGameFactory',
         }) as Address;
@@ -85,7 +88,7 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
     setGameCount(0);
     
     fetchDisputeGameFactoryProxy();
-  }, [publicClientL1, chainConfig.SystemConfigProxy]);
+  }, [publicClientL1, systemConfigProxy]);
 
   useEffect(() => {
     const loadDisputeGames = async () => {

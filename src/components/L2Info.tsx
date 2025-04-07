@@ -21,7 +21,6 @@ type EIP1559Params = {
 };
 
 const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoProps) => {
-  const systemConfigProxy = superchainRegistryInfo?.addresses?.SystemConfigProxy;
   const [blockNumber, setBlockNumber] = useState<bigint>(0n);
   const [chainId, setChainId] = useState<number>(0);
   const [chainInfo, setChainInfo] = useState<{name: string; nativeCurrency: any}>({
@@ -129,12 +128,12 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
     };
 
     const fetchL1ClientInfo = async () => {
-      if (systemConfigProxy) {
+      if (superchainRegistryInfo?.addresses?.SystemConfigProxy) {
         try {
           const data = await l1Client.multicall({
             contracts: [
               {
-                address: systemConfigProxy,
+                address: superchainRegistryInfo?.addresses?.SystemConfigProxy,
                 abi: systemConfigABI,
                 functionName: 'gasLimit',
               }

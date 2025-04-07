@@ -4,6 +4,7 @@ import DisputeGames from '../components/DisputeGames';
 
 interface DisputeGamesPageProps {
   publicClientL1: PublicClient | null;
+  superchainRegistryInfo: any;
   chainConfig: {
     SystemConfigProxy: Address;
     l1BlockExplorerURL?: string;
@@ -14,7 +15,7 @@ interface DisputeGamesPageProps {
   };
 }
 
-const DisputeGamesPage: React.FC<DisputeGamesPageProps> = ({ publicClientL1, chainConfig }) => {
+const DisputeGamesPage: React.FC<DisputeGamesPageProps> = ({ publicClientL1, superchainRegistryInfo, chainConfig }) => {
   if (!publicClientL1) {
     return <div>Loading client...</div>;
   }
@@ -22,7 +23,7 @@ const DisputeGamesPage: React.FC<DisputeGamesPageProps> = ({ publicClientL1, cha
   return (
     <div>
       <h1 className="mb-6">Dispute Games</h1>
-      <DisputeGames publicClientL1={publicClientL1} chainConfig={chainConfig} />
+      <DisputeGames publicClientL1={publicClientL1} superchainRegistryInfo={superchainRegistryInfo} chainConfig={chainConfig} />
     </div>
   );
 };

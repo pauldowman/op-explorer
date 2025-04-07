@@ -55,7 +55,6 @@ export const CHAIN_CONFIG = {
     }),
     config: {
       superchainRegistry: 'https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/refs/heads/main/superchain/configs/mainnet/op.toml',
-      SystemConfigProxy: "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290",
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [
         {
