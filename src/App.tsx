@@ -15,6 +15,7 @@ import L2Info from './components/L2Info';
 import DisputeGamesPage from './pages/DisputeGamesPage';
 import DisputeGamePage from './pages/DisputeGamePage';
 import Settings from './components/Settings';
+import Footer from './components/Footer';
 import { CHAIN_CONFIG, ChainName } from './config';
 
 interface EthereumProvider {
@@ -191,6 +192,8 @@ function App() {
               </div>
             } />
           </Routes>
+          
+          <Footer />
         </div>
       </BrowserRouter>
     </div>

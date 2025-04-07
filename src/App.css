@@ -462,3 +462,60 @@ nav a:hover:after {
   border-color: var(--link-color);
   box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb, 59, 130, 246), 0.25);
 }
+
+/* Footer styles */
+.footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--button-border);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-section {
+  min-width: 200px;
+}
+
+.copyright {
+  margin: 0;
+  color: var(--paragraph-color);
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  gap: 1.5rem;
+  justify-content: flex-end;
+}
+
+.footer-links a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-links {
+    justify-content: center;
+  }
+}
