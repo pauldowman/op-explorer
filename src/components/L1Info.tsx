@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react';
 import { formatGwei, PublicClient, Address } from 'viem';
-import { systemConfigABI } from '@eth-optimism/contracts-ts';
+import { L1_ABIs } from '../config';
 import DisplayAddress from './DisplayAddress';
 
 type OptimismConfig = {
+  disputeGameFactory: Address;
   l1StandardBridge: Address;
   optimismPortal: Address;
   l1CrossDomainMessenger: Address;
@@ -28,6 +29,7 @@ const L1Info = ({ client, config, superchainRegistryInfo }: L1InfoProps) => {
   const [gasPrice, setGasPrice] = useState<bigint>(0n);
   const [rpcUrl, setRpcUrl] = useState<string>('');
   const [optimismConfig, setOptimismConfig] = useState<OptimismConfig>({
+    disputeGameFactory: "0x0000000000000000000000000000000000000000",
     l1StandardBridge: "0x0000000000000000000000000000000000000000",
     optimismPortal: "0x0000000000000000000000000000000000000000",
     l1CrossDomainMessenger: "0x0000000000000000000000000000000000000000",
@@ -66,26 +68,32 @@ const L1Info = ({ client, config, superchainRegistryInfo }: L1InfoProps) => {
           contracts: [
             {
               address: systemConfigProxy,
-              abi: systemConfigABI,
+              abi: L1_ABIs.systemConfigABI,
+              functionName: 'disputeGameFactory',
+            },
+            {
+              address: systemConfigProxy,
+              abi: L1_ABIs.systemConfigABI,
               functionName: 'l1StandardBridge',
             },
             {
               address: systemConfigProxy,
-              abi: systemConfigABI,
+              abi: L1_ABIs.systemConfigABI,
               functionName: 'optimismPortal',
             },
             {
               address: systemConfigProxy,
-              abi: systemConfigABI,
+              abi: L1_ABIs.systemConfigABI,
               functionName: 'l1CrossDomainMessenger',
             },
           ]
         });
 
         setOptimismConfig({
-          l1StandardBridge: data[0].result as Address,
-          optimismPortal: data[1].result as Address,
-          l1CrossDomainMessenger: data[2].result as Address,
+          disputeGameFactory: data[0].result as Address,
+          l1StandardBridge: data[1].result as Address,
+          optimismPortal: data[2].result as Address,
+          l1CrossDomainMessenger: data[3].result as Address,
         });
       } catch (err) {
         console.error("Error fetching L1 contract data:", err);
@@ -109,6 +117,9 @@ const L1Info = ({ client, config, superchainRegistryInfo }: L1InfoProps) => {
           <h3 className="mb-2">Optimism Config</h3>
           <div>
             <strong>SystemConfigProxy:</strong> <DisplayAddress address={systemConfigProxy} blockExplorerURL={config.l1BlockExplorerURL} />
+          </div>
+          <div>
+            <strong>DisputeGameFactory:</strong> <DisplayAddress address={optimismConfig.disputeGameFactory} blockExplorerURL={config.l1BlockExplorerURL} />
           </div>
           <div>
             <strong>L1StandardBridge:</strong> <DisplayAddress address={optimismConfig.l1StandardBridge} blockExplorerURL={config.l1BlockExplorerURL} />

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { PublicClient, Address, formatGwei, hexToBytes } from 'viem';
 import { L2_CONTRACTS } from '../config';
+import { L1_ABIs } from '../config';
 import DisplayAddress from './DisplayAddress';
-import { systemConfigABI } from '@eth-optimism/contracts-ts';
 
 type L2InfoProps = {
   l1Client: PublicClient;
@@ -134,7 +134,7 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
             contracts: [
               {
                 address: superchainRegistryInfo?.addresses?.SystemConfigProxy,
-                abi: systemConfigABI,
+                abi: L1_ABIs.systemConfigABI,
                 functionName: 'gasLimit',
               }
             ]
