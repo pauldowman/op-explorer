@@ -151,28 +151,23 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
   }, [l1Client, l2Client, config, superchainRegistryInfo]);
 
   const gasLimitPerBlock = () => {
+    if (!gasLimit) return "0";
     return (gasLimit / 1000000n).toString();
   }
 
   const gasLimitPerSecond = (superchainRegistryInfo: any) => {
-    if (superchainRegistryInfo?.block_time) {
-      return (gasLimit / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
-    }
-    return "";
+    if (!gasLimit || !superchainRegistryInfo?.block_time) return "0";
+    return (gasLimit / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
   }
 
   const gasTargetPerBlock = (eip1559Params: EIP1559Params) => {
-    if (eip1559Params.isValid) {
-      return (gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString();
-    }
-    return "";
+    if (!gasLimit || !eip1559Params.isValid) return "0";
+    return (gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString();
   }
 
   const gasTargetPerSecond = (eip1559Params: EIP1559Params, superchainRegistryInfo: any) => {
-    if (eip1559Params.isValid && superchainRegistryInfo?.block_time) {
-      return (gasLimit / BigInt(eip1559Params.elasticity) / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
-    }
-    return "";
+    if (!gasLimit || !eip1559Params.isValid || !superchainRegistryInfo?.block_time) return "0";
+    return (gasLimit / BigInt(eip1559Params.elasticity) / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
   }
 
   return (

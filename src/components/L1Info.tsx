@@ -52,11 +52,18 @@ const L1Info = ({ client, config, superchainRegistryInfo }: L1InfoProps) => {
       } else if (client.transport && 'transports' in client.transport && client.transport.transports?.[0]?.url) {
         setRpcUrl(client.transport.transports[0].url.toString());
       }
+    };
 
-      if (systemConfigProxy) {
-        try {
-          const data = await client.multicall({
-            contracts: [
+    fetchInfo();
+  }, [client]);
+
+  useEffect(() => {
+    const fetchOptimismConfig = async () => {
+      if (!systemConfigProxy || !client) return;
+      
+      try {
+        const data = await client.multicall({
+          contracts: [
             {
               address: systemConfigProxy,
               abi: systemConfigABI,
@@ -81,13 +88,12 @@ const L1Info = ({ client, config, superchainRegistryInfo }: L1InfoProps) => {
           l1CrossDomainMessenger: data[2].result as Address,
         });
       } catch (err) {
-          console.error("Error fetching L1 contract data:", err);
-        }
+        console.error("Error fetching L1 contract data:", err);
       }
     };
 
-    fetchInfo();
-  }, [client, config, superchainRegistryInfo]);
+    fetchOptimismConfig();
+  }, [systemConfigProxy]);
 
   return (
     <div>
