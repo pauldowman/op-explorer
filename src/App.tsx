@@ -39,7 +39,13 @@ function App() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   })
   const [account, setAccount] = useState<Address>()
-  const [currentChain, setCurrentChain] = useState<ChainName>('optimism')
+  const [currentChain, setCurrentChain] = useState<ChainName>(() => {
+    const savedChain = localStorage.getItem('currentChain') as ChainName
+    if (savedChain && Object.keys(CHAIN_CONFIG).includes(savedChain)) {
+      return savedChain
+    }
+    return 'optimism'
+  })
   const [publicClientL1, setPublicClientL1] = useState<PublicClient>(CHAIN_CONFIG.optimism.l1_client as any)
   const [publicClientL2, setPublicClientL2] = useState<PublicClient>(CHAIN_CONFIG.optimism.l2_client as any)
   const [walletClient, setWalletClient] = useState<any>(null)
@@ -65,6 +71,7 @@ function App() {
     setPublicClientL1(CHAIN_CONFIG[currentChain].l1_client as any);
     setPublicClientL2(CHAIN_CONFIG[currentChain].l2_client as any);
     setChainConfig(CHAIN_CONFIG[currentChain].config)
+    localStorage.setItem('currentChain', currentChain)
 
     const loadSuperchainRegistryInfo = async () => {
       const superchainRegistryInfo = await fetch(CHAIN_CONFIG[currentChain].config.superchainRegistry)
