@@ -120,9 +120,30 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
   const [game, setGame] = useState<DisputeGame | null>(null);
   const [claims, setClaims] = useState<Claim[]>([]);
   const [loadingClaims, setLoadingClaims] = useState(true);
+  const [contractExists, setContractExists] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const checkContractExists = async () => {
+      try {
+        setLoading(true);
+        const bytecode = await publicClientL1.getCode({ address });
+        // Contract exists if bytecode is not null, undefined or empty
+        const exists = bytecode !== null && bytecode !== undefined && bytecode !== '0x';
+        setContractExists(exists);
+        return exists;
+      } catch (error) {
+        console.error('Error checking contract existence:', error);
+        setContractExists(false);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const fetchGame = async () => {
+      if (!await checkContractExists()) return;
+
       const results = await publicClientL1.multicall({
         contracts: [
           {
@@ -194,6 +215,11 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
     const fetchClaims = async () => {
       setLoadingClaims(true);
       try {
+        if (!contractExists) {
+          setClaims([]);
+          return;
+        }
+        
         const claimDataLenResult = await publicClientL1.readContract({
           address: address,
           abi: L1_ABIs.faultDisputeGameABI,
@@ -236,9 +262,30 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
       }
     };
     
-    fetchGame();
-    fetchClaims();
+    const initializeData = async () => {
+      const exists = await checkContractExists();
+      if (exists) {
+        await fetchGame();
+        await fetchClaims();
+      }
+    };
+    
+    initializeData();
   }, [address, publicClientL1]);
+  
+  if (loading) {
+    return <div className="dispute-game-details loading">Checking dispute game contract...</div>;
+  }
+  
+  if (contractExists === false) {
+    return (
+      <div className="dispute-game-details error">
+        <div className="error-message">
+          No contract found at address <DisplayAddress address={address} blockExplorerURL={chainConfig.l1BlockExplorerURL} />
+        </div>
+      </div>
+    );
+  }
   
   if (!game) {
     return <div className="dispute-game-details loading">Loading game data...</div>;
