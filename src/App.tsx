@@ -46,10 +46,10 @@ function App() {
     }
     return 'optimism'
   })
-  const [publicClientL1, setPublicClientL1] = useState<PublicClient>(CHAIN_CONFIG.optimism.l1_client as any)
-  const [publicClientL2, setPublicClientL2] = useState<PublicClient>(CHAIN_CONFIG.optimism.l2_client as any)
+  const [publicClientL1, setPublicClientL1] = useState<PublicClient>(CHAIN_CONFIG[currentChain].l1_client as any)
+  const [publicClientL2, setPublicClientL2] = useState<PublicClient>(CHAIN_CONFIG[currentChain].l2_client as any)
   const [walletClient, setWalletClient] = useState<any>(null)
-  const [chainConfig, setChainConfig] = useState<any>(CHAIN_CONFIG.optimism.config)
+  const [chainConfig, setChainConfig] = useState<any>(CHAIN_CONFIG[currentChain].config)
   const [superchainRegistryInfo, setSuperchainRegistryInfo] = useState<any>(null);
   
   useEffect(() => {
