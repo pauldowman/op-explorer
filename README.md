@@ -7,6 +7,11 @@ It's purpose is for me to explore all the pieces of the OP Stack. It's a reason 
 Try it out: https://op-explorer.pauldowman.com/
 
 
+# Help us build Optimism - we're hiring! {#hiring}
+
+I'm hiring engineering roles for the Proofs team at OP Labs. Take a look at [our open roles](https://jobs.ashbyhq.com/oplabs), apply, and [get in touch with me](https://www.pauldowman.com/) if you have questions or to let me know you've applied.
+
+
  # To do
 
 - [ ] Tests!
