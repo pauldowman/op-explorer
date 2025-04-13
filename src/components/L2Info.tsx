@@ -24,10 +24,6 @@ type EIP1559Params = {
 const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoProps) => {
   const [blockNumber, setBlockNumber] = useState<bigint>(0n);
   const [chainId, setChainId] = useState<number>(0);
-  const [chainInfo, setChainInfo] = useState<{name: string; nativeCurrency: any}>({
-    name: 'Loading...',
-    nativeCurrency: { name: '', symbol: '', decimals: 18 }
-  });
   const [gasPrice, setGasPrice] = useState<bigint>(0n);
   const [rpcUrl, setRpcUrl] = useState<string>('');
   const [l1BlockNumber, setL1BlockNumber] = useState<bigint>(0n);
@@ -93,14 +89,6 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
         setChainId(await l2Client.getChainId());
         setGasPrice(await l2Client.getGasPrice());
         
-        const chainData = l2Client.chain;
-        if (chainData) {
-          setChainInfo({
-            name: chainData.name,
-            nativeCurrency: chainData.nativeCurrency
-          });
-        }
-
         if (l2Client.transport && 'url' in l2Client.transport && l2Client.transport.url) {
           setRpcUrl(l2Client.transport.url.toString());
         } else if (l2Client.transport && 'transports' in l2Client.transport && l2Client.transport.transports?.[0]?.url) {
