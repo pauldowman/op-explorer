@@ -59,7 +59,10 @@ const Settings = ({ account, connect, disconnect, currentChain, onChainChange }:
                   <select 
                     id="chain-select" 
                     value={currentChain}
-                    onChange={(e) => onChainChange(e.target.value as ChainName)}
+                    onChange={(e) => {
+                      onChainChange(e.target.value as ChainName);
+                      closeDialog();
+                    }}
                     className="chain-select"
                   >
                     {Object.entries(CHAIN_CONFIG).map(([chainName, chainData]) => (
