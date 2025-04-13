@@ -69,13 +69,13 @@ const L1_BLOCK_EXPLORER_URL_SEPOLIA = 'https://sepolia.etherscan.io'
 
 export const CHAIN_CONFIG = {
   optimism: {
-    displayName: 'Optimism',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: optimism,
       transport: http(),
     }),
     config: {
+      displayName: 'Optimism',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/op.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [
@@ -99,104 +99,156 @@ export const CHAIN_CONFIG = {
     },
   },
   optimismSepolia: {
-    displayName: 'Optimism Sepolia',
     l1_client: L1_SEPOLIA,
     l2_client: createPublicClient({
       chain: optimismSepolia,
       transport: http(),
     }),
     config: {
+      displayName: 'Optimism Sepolia',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/op.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
       interestingDisputeGames: [],
     },
   },
   base: {
-    displayName: 'Base',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: base,
       transport: http(),
     }),
     config: {
+      displayName: 'Base',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/base.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [],
     },
   },
   baseSepolia: {
-    displayName: 'Base Sepolia',
     l1_client: L1_SEPOLIA,
     l2_client: createPublicClient({
       chain: baseSepolia,
       transport: http(),
     }),
     config: {
+      displayName: 'Base Sepolia',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/base.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
       interestingDisputeGames: [],
     },
   },
   ink: {
-    displayName: 'Ink',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: ink,
       transport: http(),
     }),
     config: {
+      displayName: 'Ink',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/ink.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [],
     },
   },
   inkSepolia: {
-    displayName: 'Ink Sepolia',
     l1_client: L1_SEPOLIA,
     l2_client: createPublicClient({
       chain: inkSepolia,
       transport: http(),
     }),
     config: {
+      displayName: 'Ink Sepolia',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/ink.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
       interestingDisputeGames: [],
     },
   },
   unichain: {
-    displayName: 'Unichain',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: unichain,
       transport: http(),
     }),
     config: {
+      displayName: 'Unichain',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/unichain.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [],
     },
   },
   unichainSepolia: {
-    displayName: 'Unichain Sepolia',
     l1_client: L1_SEPOLIA,
     l2_client: createPublicClient({
       chain: unichainSepolia,
       transport: http(),
     }),
     config: {
+      displayName: 'Unichain Sepolia',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/unichain.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
       interestingDisputeGames: [],
     },
   },
+  soneium: {
+    l1_client: L1_ETHEREUM,
+    l2_client: createPublicClient({
+      chain: soneium,
+      transport: http(),
+    }),
+    config: {
+      displayName: 'Soneium',
+      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/soneium.toml',
+      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
+      interestingDisputeGames: [],
+    },
+  },
+  soneiumMinatoSepolia: {
+    l1_client: L1_SEPOLIA,
+    l2_client: createPublicClient({
+      chain: soneiumMinato,
+      transport: http(),
+    }),
+    config: {
+      displayName: 'Soneium Minato Sepolia',
+      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/soneium.toml',
+      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
+      interestingDisputeGames: [],
+    },
+  },
+  worldchain: {
+    l1_client: L1_ETHEREUM,
+    l2_client: createPublicClient({
+      chain: worldchain,
+      transport: http(),
+    }),
+    config: {
+      displayName: 'Worldchain',
+      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/worldchain.toml',
+      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
+      interestingDisputeGames: [],
+    },
+  },
+  worldchainSepolia: {
+    l1_client: L1_SEPOLIA,
+    l2_client: createPublicClient({
+      chain: worldchainSepolia,
+      transport: http(),
+    }),
+    config: {
+      displayName: 'Worldchain Sepolia',
+      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/worldchain.toml',
+      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
+      interestingDisputeGames: [],
+    },
+  },
   metal: {
-    displayName: 'Metal',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: metalL2,
       transport: http(),
     }),
     config: {
+      displayName: 'Metal',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/metal.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [],
@@ -204,118 +256,66 @@ export const CHAIN_CONFIG = {
   },
   // Metal L2 is not supported by viem: https://github.com/wevm/viem/blob/main/src/chains/index.ts
   // metalSepolia: {
-  //   displayName: 'Metal Sepolia',
   //   l1_client: L1_SEPOLIA,
   //   l2_client: createPublicClient({
   //     chain: metalL2Sepolia,
   //     transport: http(),
   //   }),
   //   config: {
+  //     displayName: 'Metal Sepolia',
   //     superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/metal.toml',
   //     l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
   //     interestingDisputeGames: [],
   //   },
   // },
   mode: {
-    displayName: 'Mode',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: mode,
       transport: http(),
     }),
     config: {
+      displayName: 'Mode',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/mode.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [],
     },
   },
   modeSepolia: {
-    displayName: 'Mode Sepolia',
     l1_client: L1_SEPOLIA,
     l2_client: createPublicClient({
       chain: modeTestnet,
       transport: http(),
     }),
     config: {
+      displayName: 'Mode Sepolia',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/mode.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
       interestingDisputeGames: [],
     },
   },
   zora: {
-    displayName: 'Zora',
     l1_client: L1_ETHEREUM,
     l2_client: createPublicClient({
       chain: zora,
       transport: http(),
     }),
     config: {
+      displayName: 'Zora',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/zora.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
       interestingDisputeGames: [],
     },
   },
   zoraSepolia: {
-    displayName: 'Zora Sepolia',
     l1_client: L1_SEPOLIA,
     l2_client: createPublicClient({
       chain: zoraSepolia,
       transport: http(),
     }),
     config: {
+      displayName: 'Zora Sepolia',
       superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/zora.toml',
-      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
-      interestingDisputeGames: [],
-    },
-  },
-  worldchain: {
-    displayName: 'Worldchain',
-    l1_client: L1_ETHEREUM,
-    l2_client: createPublicClient({
-      chain: worldchain,
-      transport: http(),
-    }),
-    config: {
-      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/worldchain.toml',
-      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
-      interestingDisputeGames: [],
-    },
-  },
-  worldchainSepolia: {
-    displayName: 'Worldchain Sepolia',
-    l1_client: L1_SEPOLIA,
-    l2_client: createPublicClient({
-      chain: worldchainSepolia,
-      transport: http(),
-    }),
-    config: {
-      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/worldchain.toml',
-      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
-      interestingDisputeGames: [],
-    },
-  },
-  soneium: {
-    displayName: 'Soneium',
-    l1_client: L1_ETHEREUM,
-    l2_client: createPublicClient({
-      chain: soneium,
-      transport: http(),
-    }),
-    config: {
-      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'mainnet/soneium.toml',
-      l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_MAINNET,
-      interestingDisputeGames: [],
-    },
-  },
-  soneiumMinatoSepolia: {
-    displayName: 'Soneium Minato Sepolia',
-    l1_client: L1_SEPOLIA,
-    l2_client: createPublicClient({
-      chain: soneiumMinato,
-      transport: http(),
-    }),
-    config: {
-      superchainRegistry: SUPERCHAIN_REGISTRY_BASE_URL + 'sepolia/soneium.toml',
       l1BlockExplorerURL: L1_BLOCK_EXPLORER_URL_SEPOLIA,
       interestingDisputeGames: [],
     },

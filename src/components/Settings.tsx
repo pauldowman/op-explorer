@@ -29,7 +29,7 @@ const Settings = ({ account, connect, disconnect, currentChain, onChainChange }:
         onClick={openDialog}
         aria-label="Settings"
       >
-        {CHAIN_CONFIG[currentChain].displayName}
+        {CHAIN_CONFIG[currentChain].config.displayName}
         {account && <span className="address-display"> | {truncateAddress(account)}</span>}
       </button>
 
@@ -67,7 +67,7 @@ const Settings = ({ account, connect, disconnect, currentChain, onChainChange }:
                   >
                     {Object.entries(CHAIN_CONFIG).map(([chainName, chainData]) => (
                       <option key={chainName} value={chainName}>
-                        {chainData.displayName}
+                        {chainData.config.displayName}
                       </option>
                     ))}
                   </select>

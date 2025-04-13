@@ -8,6 +8,7 @@ type L2InfoProps = {
   l1Client: PublicClient;
   l2Client: PublicClient;
   config: {
+    displayName: string;
     l1BlockExplorerURL: string;
   };
   superchainRegistryInfo: any; // TODO: give this a type
@@ -172,7 +173,7 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
 
   return (
     <div>
-      <h2 className="mb-4">L2: {chainInfo.name}</h2>
+      <h2 className="mb-4">L2: {config.displayName}</h2>
       <div className="mb-4">
         <div><strong>Chain ID:</strong> {chainId}</div>
         <div><strong>RPC URL:</strong> {rpcUrl}</div>
