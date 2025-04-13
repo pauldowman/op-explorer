@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         <div className="footer-section">
           <ul className="footer-links">
             <li><a href="https://github.com/pauldowman/op-explorer" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-            <li><a href="https://github.com/pauldowman/op-explorer/blob/main/README.md#hiring" target="_blank" rel="noopener noreferrer">Help build Optimism, we're hiring!</a></li>
+            <li><a href="https://github.com/pauldowman/op-explorer/blob/main/README.md#help-us-build-optimism---were-hiring" target="_blank" rel="noopener noreferrer">Help build Optimism, we're hiring!</a></li>
           </ul>
         </div>
       </div>
