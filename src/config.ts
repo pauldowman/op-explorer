@@ -50,10 +50,6 @@ export function getGameTypeName(typeValue: number) {
   return (gameTypes as Record<number, string>)[typeValue] || 'UNKNOWN';
 }
 
-
-// Define a type for valid chain names
-export type ChainName = 'optimism' | 'optimismSepolia' | 'base' | 'baseSepolia';
-
 const L1_ETHEREUM = createPublicClient({
   chain: mainnet,
   transport: http(),
@@ -320,8 +316,9 @@ export const CHAIN_CONFIG = {
       interestingDisputeGames: [],
     },
   },
-}
+} as const;
 
+export type ChainName = keyof typeof CHAIN_CONFIG;
 
 export const L2_CONTRACTS: Record<string, `0x${string}`> = {
   L2ToL1MessagePasser: "0x4200000000000000000000000000000000000016",
