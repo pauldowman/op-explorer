@@ -11,9 +11,11 @@ type DisputeGame = {
 };
 
 interface RawDisputeGame {
+  index: bigint;
   metadata: `0x${string}`;
   timestamp: bigint;
-  type: number;
+  rootClaim: `0x${string}`;
+  extraData: `0x${string}`;
 }
 
 type DisputeGamesProps = {
@@ -119,9 +121,9 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
           console.log('game', game);
           const metadata = game.metadata as `0x${string}`;
           const address = metadata.slice(-40) as Address;
-          const typeHex = metadata.slice(0, 4);
-          const typeInt = parseInt(typeHex, 16);
-          return { 
+          const typeHex = metadata.slice(0, 6); // 4 bytes plus `0x`
+          const typeInt = parseInt(typeHex);
+          return {
             address: `0x${address}`,
             timestamp: game.timestamp,
             type: typeInt,
