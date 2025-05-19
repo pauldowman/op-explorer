@@ -1,4 +1,4 @@
 - See README.md for dev environment setup and how to run tests
-- ALWAYS write a test for each change.
+- ALWAYS write a test for each change. Test files live beside the file under test, with `.test` appended before the file extension.
 - Also add tests for any other areas that might be affected if there is no existing test that covers it.
 - Run tests and ensure that all tests are passing.
