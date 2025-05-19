@@ -9,7 +9,8 @@ Try it out: https://op-explorer.pauldowman.com/
 
 # Local environment setup
 
-- `./start.sh` installs dependencies and runs the web app
+- `npm install`
+- `npm run dev` runs the web app
 - `npm test` runs tests
 
 
