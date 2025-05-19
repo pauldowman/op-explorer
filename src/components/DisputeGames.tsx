@@ -48,6 +48,16 @@ const getStatusClass = (status?: number): string => {
   return '';
 };
 
+export const parseDisputeGameMetadata = (metadata: `0x${string}`) => {
+  const address = metadata.slice(-40) as Address;
+  const typeHex = metadata.slice(0, 10);
+  const typeInt = parseInt(typeHex);
+  return {
+    address: `0x${address}` as Address,
+    type: typeInt,
+  };
+};
+
 const DisputeGames: React.FC<DisputeGamesProps> = ({
   publicClientL1,
   superchainRegistryInfo,
@@ -114,19 +124,13 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
           functionName: 'findLatestGames',
           args: [gameType, totalGameCount - 1n - BigInt(offset), pageSize],
         }) as RawDisputeGame[];
-        
-        console.log('latestGames', latestGames);
-        
+                
         const mappedGames = latestGames.map((game: RawDisputeGame) => {
-          console.log('game', game);
-          const metadata = game.metadata as `0x${string}`;
-          const address = metadata.slice(-40) as Address;
-          const typeHex = metadata.slice(0, 6); // 4 bytes plus `0x`
-          const typeInt = parseInt(typeHex);
+          const { address, type } = parseDisputeGameMetadata(game.metadata as `0x${string}`)
           return {
-            address: `0x${address}`,
+            address,
             timestamp: game.timestamp,
-            type: typeInt,
+            type,
           }
         });
         
@@ -448,4 +452,4 @@ const DisputeGames: React.FC<DisputeGamesProps> = ({
   );
 };
 
-export default DisputeGames; 
+export default DisputeGames;

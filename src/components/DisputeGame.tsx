@@ -4,6 +4,7 @@ import { formatEther } from 'viem';
 import DisplayAddress from './DisplayAddress';
 import { getGameTypeName, L1_ABIs } from '../config';
 
+
 type DisputeGameProps = {
   address: Address;
   publicClientL1: PublicClient;
@@ -29,8 +30,7 @@ type DisputeGame = {
 type Position = bigint; // uint128
 type Clock = bigint; // uint128
 
-const unpackClock = (clock: Clock): { duration: bigint; timestamp: bigint } => {
-  // bits 0-63 are Duration, bits 64-127 are Timestamp
+export const unpackClock = (clock: Clock): { duration: bigint; timestamp: bigint } => {
   const duration = clock & ((1n << 64n) - 1n);
   const timestamp = clock >> 64n;
   return { duration, timestamp };
@@ -50,6 +50,21 @@ type Claim = {
   index: number;
   claimData: ClaimData;
 };
+
+export type RawClaimData = [number, Address, Address, bigint, `0x${string}`, bigint, bigint];
+
+export const parseClaimData = (raw: RawClaimData, index: number): Claim => ({
+  index,
+  claimData: {
+    parentIndex: raw[0],
+    counteredBy: raw[1],
+    claimant: raw[2],
+    bond: raw[3],
+    claim: raw[4],
+    position: raw[5],
+    clock: raw[6],
+  },
+});
 
 const ClaimDataDisplay: React.FC<{ claim: Claim, blockExplorerURL?: string }> = ({ claim, blockExplorerURL }) => {
   const { duration, timestamp } = unpackClock(claim.claimData.clock);
@@ -228,7 +243,7 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
         
         const claimDataLen = claimDataLenResult as bigint;
         const allClaims: Claim[] = [];
-        
+
         for (let i = 0n; i < claimDataLen; i++) {
           const result = await publicClientL1.readContract({
             address: address,
@@ -236,21 +251,10 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
             functionName: 'claimData',
             args: [i],
           });
-          
-          const claimData = result as [number, Address, Address, bigint, `0x${string}`, bigint, bigint];
-          const claim: Claim = {
-            index: Number(i),
-            claimData: {
-              parentIndex: claimData[0],
-              counteredBy: claimData[1],
-              claimant: claimData[2],
-              bond: claimData[3],
-              claim: claimData[4],
-              position: claimData[5],
-              clock: claimData[6]
-            }
-          };
-          
+
+          const claimData = result as RawClaimData;
+          const claim: Claim = parseClaimData(claimData, Number(i));
+
           allClaims.push(claim);
         }
         
@@ -334,4 +338,4 @@ const DisputeGame: React.FC<DisputeGameProps> = ({
   );
 };
 
-export default DisputeGame; 
+export default DisputeGame;
