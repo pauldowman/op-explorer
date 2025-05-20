@@ -14,11 +14,75 @@ type L2InfoProps = {
   superchainRegistryInfo: any; // TODO: give this a type
 };
 
-type EIP1559Params = {
+export type EIP1559Params = {
   version: number;
   denominator: number;
   elasticity: number;
   isValid: boolean;
+};
+
+export const parseEIP1559Params = (extraDataHex: string): EIP1559Params => {
+  try {
+    const formattedHex = extraDataHex.startsWith('0x')
+      ? (extraDataHex as `0x${string}`)
+      : (`0x${extraDataHex}` as `0x${string}`);
+    const bytes = hexToBytes(formattedHex);
+
+    if (bytes.length < 9) {
+      return { version: 0, denominator: 0, elasticity: 0, isValid: false };
+    }
+
+    const version = bytes[0];
+    const denominator =
+      (bytes[1] << 24) | (bytes[2] << 16) | (bytes[3] << 8) | bytes[4];
+    const elasticity =
+      (bytes[5] << 24) | (bytes[6] << 16) | (bytes[7] << 8) | bytes[8];
+
+    const isValid = version === 0 && denominator !== 0 && bytes.length <= 32;
+
+    return { version, denominator, elasticity, isValid };
+  } catch (error) {
+    console.error('Error parsing EIP-1559 parameters:', error);
+    return { version: 0, denominator: 0, elasticity: 0, isValid: false };
+  }
+};
+
+export const formatGasLimitPerBlock = (gasLimit?: bigint): string => {
+  if (!gasLimit) return '0';
+  return (gasLimit / 1000000n).toString();
+};
+
+export const formatGasLimitPerSecond = (
+  gasLimit: bigint | undefined,
+  superchainRegistryInfo: any
+): string => {
+  if (!gasLimit || !superchainRegistryInfo?.block_time) return '0';
+  return (
+    gasLimit / BigInt(superchainRegistryInfo.block_time) / 1000000n
+  ).toString();
+};
+
+export const formatGasTargetPerBlock = (
+  gasLimit: bigint | undefined,
+  eip1559Params: EIP1559Params
+): string => {
+  if (!gasLimit || !eip1559Params.isValid) return '0';
+  return (gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString();
+};
+
+export const formatGasTargetPerSecond = (
+  gasLimit: bigint | undefined,
+  eip1559Params: EIP1559Params,
+  superchainRegistryInfo: any
+): string => {
+  if (!gasLimit || !eip1559Params.isValid || !superchainRegistryInfo?.block_time)
+    return '0';
+  return (
+    gasLimit /
+    BigInt(eip1559Params.elasticity) /
+    BigInt(superchainRegistryInfo.block_time) /
+    1000000n
+  ).toString();
 };
 
 const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoProps) => {
@@ -36,38 +100,6 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
   });
   const [gasLimit, setGasLimit] = useState<bigint>(0n);
 
-  const parseEIP1559Params = (extraDataHex: string): EIP1559Params => {
-    try {
-      // Convert hex string to bytes
-      // Ensure extraDataHex is properly formatted (with 0x prefix)
-      const formattedHex = extraDataHex.startsWith('0x') 
-        ? extraDataHex as `0x${string}` 
-        : `0x${extraDataHex}` as `0x${string}`;
-      const bytes = hexToBytes(formattedHex);
-      
-      // Check if we have at least 9 bytes
-      if (bytes.length < 9) {
-        return { version: 0, denominator: 0, elasticity: 0, isValid: false };
-      }
-      
-      // Parse version (1 byte)
-      const version = bytes[0];
-      
-      // Parse denominator (4 bytes, big-endian)
-      const denominator = (bytes[1] << 24) | (bytes[2] << 16) | (bytes[3] << 8) | bytes[4];
-      
-      // Parse elasticity (4 bytes, big-endian)
-      const elasticity = (bytes[5] << 24) | (bytes[6] << 16) | (bytes[7] << 8) | bytes[8];
-      
-      // Check if valid according to spec
-      const isValid = version === 0 && denominator !== 0 && bytes.length <= 32;
-      
-      return { version, denominator, elasticity, isValid };
-    } catch (error) {
-      console.error('Error parsing EIP-1559 parameters:', error);
-      return { version: 0, denominator: 0, elasticity: 0, isValid: false };
-    }
-  };
 
   useEffect(() => {
     const fetchL2ClientInfo = async () => {
@@ -139,25 +171,13 @@ const L2Info = ({ l1Client, l2Client, config, superchainRegistryInfo }: L2InfoPr
     fetchL1ClientInfo();
   }, [l1Client, l2Client, config, superchainRegistryInfo]);
 
-  const gasLimitPerBlock = () => {
-    if (!gasLimit) return "0";
-    return (gasLimit / 1000000n).toString();
-  }
-
-  const gasLimitPerSecond = (superchainRegistryInfo: any) => {
-    if (!gasLimit || !superchainRegistryInfo?.block_time) return "0";
-    return (gasLimit / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
-  }
-
-  const gasTargetPerBlock = (eip1559Params: EIP1559Params) => {
-    if (!gasLimit || !eip1559Params.isValid) return "0";
-    return (gasLimit / BigInt(eip1559Params.elasticity) / 1000000n).toString();
-  }
-
-  const gasTargetPerSecond = (eip1559Params: EIP1559Params, superchainRegistryInfo: any) => {
-    if (!gasLimit || !eip1559Params.isValid || !superchainRegistryInfo?.block_time) return "0";
-    return (gasLimit / BigInt(eip1559Params.elasticity) / BigInt(superchainRegistryInfo.block_time) / 1000000n).toString();
-  }
+  const gasLimitPerBlock = () => formatGasLimitPerBlock(gasLimit);
+  const gasLimitPerSecond = (info: any) =>
+    formatGasLimitPerSecond(gasLimit, info);
+  const gasTargetPerBlock = (params: EIP1559Params) =>
+    formatGasTargetPerBlock(gasLimit, params);
+  const gasTargetPerSecond = (params: EIP1559Params, info: any) =>
+    formatGasTargetPerSecond(gasLimit, params, info);
 
   return (
     <div>
