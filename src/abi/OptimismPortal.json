@@ -1,0 +1,11 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "internalType": "bytes32", "name": "withdrawalHash", "type": "bytes32"},
+      {"indexed": false, "internalType": "bool", "name": "success", "type": "bool"}
+    ],
+    "name": "WithdrawalFinalized",
+    "type": "event"
+  }
+]

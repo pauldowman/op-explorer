@@ -14,6 +14,7 @@ import L1Info from './components/L1Info';
 import L2Info from './components/L2Info';
 import DisputeGamesPage from './pages/DisputeGamesPage';
 import DisputeGamePage from './pages/DisputeGamePage';
+import WithdrawalsPage from './pages/WithdrawalsPage';
 import Settings from './components/Settings';
 import Footer from './components/Footer';
 import { CHAIN_CONFIG, ChainName } from './config';
@@ -167,6 +168,7 @@ function App() {
             <ul>
               <li><Link to="/">Home</Link></li>
               <li><Link to="/dispute-games">Dispute Games</Link></li>
+              <li><Link to="/withdrawals">Withdrawals</Link></li>
             </ul>
           </nav>
           
@@ -192,9 +194,17 @@ function App() {
             } />
             <Route path="/dispute-game/:address" element={
               <div className="card">
-                <DisputeGamePage 
-                  publicClientL1={publicClientL1} 
+                <DisputeGamePage
+                  publicClientL1={publicClientL1}
                   chainConfig={chainConfig}
+                />
+              </div>
+            } />
+            <Route path="/withdrawals" element={
+              <div className="card">
+                <WithdrawalsPage
+                  publicClientL2={publicClientL2}
+                  explorerURL={superchainRegistryInfo?.explorer}
                 />
               </div>
             } />
